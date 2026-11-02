@@ -1,0 +1,47 @@
+{
+  "status": "passed",
+  "k": 10,
+  "ranks": 20,
+  "curve_coordinates": 120,
+  "decimal_precision": 80,
+  "pdf_weight_tolerance": 5e-09,
+  "original_csv": "experiments/camera_ready/results/figure1_original_curves.csv",
+  "original_csv_sha256": "ee644d82d37269c27eddf244961e96d7fd42912be487f046fbc461f2040928a9",
+  "formula": "Theorem 3.1 finite sum, with q = 1 - gamma",
+  "independent_check": "Positive recurrence in Appendix B",
+  "logistic_midpoint": "h(alpha, k) + 1/2",
+  "note": "Small differences from the original coordinates reflect PDF serialization rounding.",
+  "curves": [
+    {
+      "gamma_index": 0,
+      "gamma": "0.05",
+      "maximum_closed_form_recurrence_difference": "3E-80",
+      "maximum_original_weight_difference": {
+        "exact": 1.7410949348928284e-09,
+        "approximation": 1.751063682942089e-09
+      },
+      "range_monotonicity_and_logistic_bounds": "passed"
+    },
+    {
+      "gamma_index": 1,
+      "gamma": "0.15",
+      "maximum_closed_form_recurrence_difference": "1.0E-78",
+      "maximum_original_weight_difference": {
+        "exact": 1.7179432876268663e-09,
+        "approximation": 1.720410591765642e-09
+      },
+      "range_monotonicity_and_logistic_bounds": "passed"
+    },
+    {
+      "gamma_index": 2,
+      "gamma": "0.33333333333333333333333333333333333333333333333333333333333333333333333333333333",
+      "maximum_closed_form_recurrence_difference": "1.08696102E-72",
+      "maximum_original_weight_difference": {
+        "exact": 1.593968013136049e-09,
+        "approximation": 1.7419515829786292e-09
+      },
+      "range_monotonicity_and_logistic_bounds": "passed"
+    }
+  ],
+  "theory_csv_sha256": "3066a48f6ee070cd44a50474e56c69c22a8e10b4d9fb8381bfbedd23a28a2acb"
+}

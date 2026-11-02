@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+results/benchmark/
+results/*.png
+results/*.log

@@ -1,0 +1,64 @@
+{
+  "source_sha256": "5d6c7bb92a53eec24fd78419bbc5fe51b85bfcb82b852ee1467fd200eb47b8d3",
+  "csv_sha256": "ee644d82d37269c27eddf244961e96d7fd42912be487f046fbc461f2040928a9",
+  "output": "neurips/figures/figure1.pdf",
+  "output_sha256": "be82fbbbcce920bccc02ed4bc06732e0fa24d685a7c01985f3087f36b075e845",
+  "source_vertices_preserved": 120,
+  "output_size_inches": [
+    3.0,
+    2.05
+  ],
+  "x_limits": [
+    0.0,
+    20.95
+  ],
+  "y_limits": [
+    0.0,
+    1.05
+  ],
+  "note": "Differences reflect decimal rounding in PDF path serialization.",
+  "curves": [
+    {
+      "gamma_index": 0,
+      "variant": "exact",
+      "vertex_count": 20,
+      "maximum_j_difference": 5.715243300841166e-08,
+      "maximum_weight_difference": 4.3686677053678125e-09
+    },
+    {
+      "gamma_index": 0,
+      "variant": "approximation",
+      "vertex_count": 20,
+      "maximum_j_difference": 5.715243300841166e-08,
+      "maximum_weight_difference": 4.3186610121370705e-09
+    },
+    {
+      "gamma_index": 1,
+      "variant": "exact",
+      "vertex_count": 20,
+      "maximum_j_difference": 5.715243300841166e-08,
+      "maximum_weight_difference": 4.4197384085897795e-09
+    },
+    {
+      "gamma_index": 1,
+      "variant": "approximation",
+      "vertex_count": 20,
+      "maximum_j_difference": 5.715243300841166e-08,
+      "maximum_weight_difference": 4.6378526297186085e-09
+    },
+    {
+      "gamma_index": 2,
+      "variant": "exact",
+      "vertex_count": 20,
+      "maximum_j_difference": 5.715243300841166e-08,
+      "maximum_weight_difference": 4.5378393265238515e-09
+    },
+    {
+      "gamma_index": 2,
+      "variant": "approximation",
+      "vertex_count": 20,
+      "maximum_j_difference": 5.715243300841166e-08,
+      "maximum_weight_difference": 4.567630496055131e-09
+    }
+  ]
+}

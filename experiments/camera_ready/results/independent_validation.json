@@ -1,0 +1,304 @@
+{
+  "status": "passed",
+  "audit_timestamp_utc": "2026-10-27T23:18:15.267891+00:00",
+  "auditor": "independent manuscript_audit agent",
+  "execution_command": "python experiments/camera_ready/validate_results.py",
+  "source_sha256": {
+    "correlated.py": "258cf05a306e0eefdda32366fe37c5d95de62b02d7779d2335e9176473b4ed91",
+    "gram_fs.cpp": "f39b06556f9d238461d96edbc7f77e49f51c5997db18d0a1970cefb12195065d",
+    "correlated_plot.py": "c0cb8747cd6b41f9e8fb06193141d89da5b05f26e60b5014637db1adbefd268d",
+    "validate_results.py": "1cb4734e3bdfe9f4cd03ea414c217ec3de9f91aaf6b67ee78b35f4e853724777"
+  },
+  "correlated_kernel_independent_direct_ols": {
+    "status": "passed",
+    "seed": 9131,
+    "n": 70,
+    "p": 16,
+    "kmax": 14,
+    "ensemble_size": 11,
+    "m_values": [
+      1,
+      3,
+      8,
+      16
+    ],
+    "selected_step_checks": 476,
+    "nonzero_means": true,
+    "correlated_unequally_scaled_features": true,
+    "candidate_subset_validity": "passed",
+    "intercept_mean_identity": "passed",
+    "maximum_coefficient_error": 1.765254609153999e-14
+  },
+  "correlated_raw_summary_recomputation": {
+    "status": "passed",
+    "independent_datasets": 600,
+    "unique_data_seeds": 600,
+    "paired_summary_rows": 240,
+    "marginal_summary_rows": 480,
+    "student_t_df": 199,
+    "independently_computed_t975": 1.971956544251877,
+    "checked_fields": [
+      "mean",
+      "sd",
+      "mcse",
+      "ci_low",
+      "ci_high"
+    ],
+    "maximum_absolute_discrepancy": 6.252776074688882e-13,
+    "paired_risk_training_df_identity_maximum_error": 1.9255708139098715e-12,
+    "joint_cv_selection_and_m_equals_p_endpoint": "passed"
+  },
+  "numerical_claims_evidence": {
+    "0.053": {
+      "training_mse": {
+        "negative_pointwise_interval_k": [
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
+        ],
+        "positive_pointwise_interval_k": [
+          1,
+          2
+        ],
+        "interval_contains_zero_k": [
+          3,
+          4,
+          5
+        ]
+      },
+      "df_covariance": {
+        "negative_pointwise_interval_k": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
+        ],
+        "positive_pointwise_interval_k": [],
+        "interval_contains_zero_k": []
+      },
+      "prediction_risk": {
+        "negative_pointwise_interval_k": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
+        ],
+        "positive_pointwise_interval_k": [],
+        "interval_contains_zero_k": []
+      }
+    },
+    "0.25": {
+      "training_mse": {
+        "negative_pointwise_interval_k": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
+        ],
+        "positive_pointwise_interval_k": [],
+        "interval_contains_zero_k": []
+      },
+      "df_covariance": {
+        "negative_pointwise_interval_k": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
+        ],
+        "positive_pointwise_interval_k": [],
+        "interval_contains_zero_k": []
+      },
+      "prediction_risk": {
+        "negative_pointwise_interval_k": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
+        ],
+        "positive_pointwise_interval_k": [],
+        "interval_contains_zero_k": []
+      }
+    },
+    "1.0": {
+      "training_mse": {
+        "negative_pointwise_interval_k": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
+        ],
+        "positive_pointwise_interval_k": [],
+        "interval_contains_zero_k": []
+      },
+      "df_covariance": {
+        "negative_pointwise_interval_k": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
+        ],
+        "positive_pointwise_interval_k": [
+          9,
+          10,
+          11,
+          12
+        ],
+        "interval_contains_zero_k": [
+          8,
+          13
+        ]
+      },
+      "prediction_risk": {
+        "negative_pointwise_interval_k": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
+        ],
+        "positive_pointwise_interval_k": [],
+        "interval_contains_zero_k": [
+          10,
+          11
+        ]
+      }
+    }
+  },
+  "scope_notes": [
+    "This validation covers revised Figure 2 and its correlated-design study.",
+    "Monte Carlo intervals are pointwise, not simultaneous.",
+    "FS and EFS use the same dataset within each replicate.",
+    "Paired summary CSVs are retained for numerical checks; only the three marginal Figure 2 panels are generated."
+  ]
+}

@@ -1,0 +1,151 @@
+{
+  "source": "images/wj_vs_gamma_logistic.pdf",
+  "source_sha256": "5d6c7bb92a53eec24fd78419bbc5fe51b85bfcb82b852ee1467fd200eb47b8d3",
+  "csv_sha256": "ee644d82d37269c27eddf244961e96d7fd42912be487f046fbc461f2040928a9",
+  "source_page": 1,
+  "source_page_size_pdf_points": [
+    0.0,
+    0.0,
+    493.85375,
+    351.185
+  ],
+  "source_axes_rectangle_pdf_points": [
+    65.29375,
+    46.825,
+    421.36,
+    297.16
+  ],
+  "x_limits": [
+    0.0,
+    20.95
+  ],
+  "y_limits": [
+    0.0,
+    1.05
+  ],
+  "extraction": "Inverse affine map of all 120 original PDF polyline vertices. No fitting, smoothing, interpolation changes, or formula substitution.",
+  "axis_calibration": "Plot rectangle and labeled ticks give x limits [0,20.95] and y limits [0,1.05]. Original PDF coordinates are retained alongside each recovered data coordinate.",
+  "scientific_note": "The dashed curves agree with midpoint h(alpha,10)+1/2, not 10+1/2 as referenced by the original caption. The NeurIPS caption has been corrected to describe the plotted curves. The third gamma is 1/3, displayed as 0.333. All original curve coordinates are preserved.",
+  "curves": [
+    {
+      "gamma_index": 0,
+      "gamma": 0.05,
+      "display_gamma": "0.05",
+      "variant": "exact",
+      "vertex_count": 20,
+      "stroke_operation": 218,
+      "original_rgb": [
+        0.3647058824,
+        0.2901960784,
+        0.5960784314
+      ],
+      "original_dash": [],
+      "maximum_roundtrip_error_pdf_points": 5.684341886080802e-14,
+      "formula_diagnostics": {}
+    },
+    {
+      "gamma_index": 0,
+      "gamma": 0.05,
+      "display_gamma": "0.05",
+      "variant": "approximation",
+      "vertex_count": 20,
+      "stroke_operation": 248,
+      "original_rgb": [
+        0.3647058824,
+        0.2901960784,
+        0.5960784314
+      ],
+      "original_dash": [
+        9.6,
+        2.4,
+        1.5,
+        2.4
+      ],
+      "maximum_roundtrip_error_pdf_points": 5.684341886080802e-14,
+      "formula_diagnostics": {
+        "h_plus_one_half_maximum_absolute_difference": 1.5769113792529765e-09,
+        "k_plus_one_half_maximum_absolute_difference": 0.22437732493649554
+      }
+    },
+    {
+      "gamma_index": 1,
+      "gamma": 0.15,
+      "display_gamma": "0.15",
+      "variant": "exact",
+      "vertex_count": 20,
+      "stroke_operation": 278,
+      "original_rgb": [
+        0.9921568627,
+        0.5529411765,
+        0.2352941176
+      ],
+      "original_dash": [],
+      "maximum_roundtrip_error_pdf_points": 5.684341886080802e-14,
+      "formula_diagnostics": {}
+    },
+    {
+      "gamma_index": 1,
+      "gamma": 0.15,
+      "display_gamma": "0.15",
+      "variant": "approximation",
+      "vertex_count": 20,
+      "stroke_operation": 308,
+      "original_rgb": [
+        0.9921568627,
+        0.5529411765,
+        0.2352941176
+      ],
+      "original_dash": [
+        9.6,
+        2.4,
+        1.5,
+        2.4
+      ],
+      "maximum_roundtrip_error_pdf_points": 5.684341886080802e-14,
+      "formula_diagnostics": {
+        "h_plus_one_half_maximum_absolute_difference": 1.9631531400499114e-09,
+        "k_plus_one_half_maximum_absolute_difference": 0.05474524174028311
+      }
+    },
+    {
+      "gamma_index": 2,
+      "gamma": 0.3333333333333333,
+      "display_gamma": "0.333",
+      "variant": "exact",
+      "vertex_count": 20,
+      "stroke_operation": 338,
+      "original_rgb": [
+        0.4549019608,
+        0.662745098,
+        0.8117647059
+      ],
+      "original_dash": [],
+      "maximum_roundtrip_error_pdf_points": 5.684341886080802e-14,
+      "formula_diagnostics": {}
+    },
+    {
+      "gamma_index": 2,
+      "gamma": 0.3333333333333333,
+      "display_gamma": "0.333",
+      "variant": "approximation",
+      "vertex_count": 20,
+      "stroke_operation": 368,
+      "original_rgb": [
+        0.4549019608,
+        0.662745098,
+        0.8117647059
+      ],
+      "original_dash": [
+        9.6,
+        2.4,
+        1.5,
+        2.4
+      ],
+      "maximum_roundtrip_error_pdf_points": 5.684341886080802e-14,
+      "formula_diagnostics": {
+        "h_plus_one_half_maximum_absolute_difference": 2.9832192272039038e-09,
+        "k_plus_one_half_maximum_absolute_difference": 0.004332498185965261
+      }
+    }
+  ]
+}
