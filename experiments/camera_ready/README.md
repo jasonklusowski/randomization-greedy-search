@@ -26,14 +26,14 @@ stated in the paper. To repeat the extraction from the source PDF, run
 `python experiments/camera_ready/neurips_figure1.py --extract-source images/wj_vs_gamma_logistic.pdf`.
 
 The updated Figure 2 uses the saved means and pointwise intervals in
-`results/neurips_500/correlated_marginal_summary.csv`, with SNRs
+`results/neurips_1000/correlated_marginal_summary.csv`, with SNRs
 `{0.05, 0.25, 1.0}`.
 
 ## Repeating the Figure 2 experiment
 
-The updated comparison uses 500 independent datasets at each SNR in
-`{0.05, 0.25, 1.0}`. It reuses the first 200 verified records per SNR and
-fits replicates 200–499 with the same settings and seed scheme. The figure
+The updated comparison uses 1,000 independent datasets at each SNR in
+`{0.05, 0.25, 1.0}`. It reuses the first 500 verified records per SNR and
+fits replicates 500–999 with the same settings and seed scheme. The figure
 reports training MSE and covariance degrees of freedom with pointwise 95%
 Monte Carlo confidence intervals.
 
@@ -42,18 +42,18 @@ must be available as `clang++`. Run these commands from the repository root.
 
 ```sh
 python -m pip install -r experiments/camera_ready/requirements.txt
-python experiments/camera_ready/neurips_simulation.py --replicates 500 --workers 4
+python experiments/camera_ready/neurips_simulation.py --replicates 1000 --workers 4
 python experiments/camera_ready/neurips_figure2.py
 ```
 
 The run resumes from completed replicate files. To validate the saved files
 and rebuild their summaries, add `--summarize-only` to the simulation command.
-To fit all 1,500 datasets from scratch and redraw the figure in a separate
+To fit all 3,000 datasets from scratch and redraw the figure in a separate
 output directory, run the following commands with a new directory path.
 
 ```sh
-python experiments/camera_ready/neurips_simulation.py --replicates 500 --workers 4 --fresh --output /tmp/efs-neurips-500
-python experiments/camera_ready/neurips_figure2.py --summary /tmp/efs-neurips-500/correlated_marginal_summary.csv --output /tmp/efs-neurips-500/figure2.pdf
+python experiments/camera_ready/neurips_simulation.py --replicates 1000 --workers 4 --fresh --output /tmp/efs-neurips-1000
+python experiments/camera_ready/neurips_figure2.py --summary /tmp/efs-neurips-1000/correlated_marginal_summary.csv --output /tmp/efs-neurips-1000/figure2.pdf
 ```
 
 All settings and random seeds are fixed in the scripts and saved configurations.
@@ -65,16 +65,26 @@ EFS. There is no additional resampling of the frequencies of selected sets.
 
 ## Saved evidence
 
-`results/neurips_500/correlated_replicates.csv` contains metrics for all 1,500
-datasets. The 900 new raw files are in `results/neurips_500/replicates/`.
+`results/neurips_1000/correlated_replicates.csv` contains metrics for all 3,000
+datasets. The 1,500 new raw files are in `results/neurips_1000/replicates/`.
+The 900 raw files for replicates 200–499 are in `results/neurips_500/replicates/`.
 The first 200 raw files for SNR 0.05 are in `results/neurips_snr005/replicates/`,
 and the first 200 each for SNRs 0.25 and 1.0 are in `results/replicates/`.
-They preserve coefficient paths, intercepts, cross-validation scores,
-selected parameters, and seeds. Marginal and paired CSVs in
-`results/neurips_500/` contain means, Monte Carlo standard errors, and
+The raw files preserve coefficient paths, intercepts, cross-validation
+scores, selected parameters, and seeds. Marginal and paired CSVs in
+`results/neurips_1000/` contain means, Monte Carlo standard errors, and
 pointwise confidence limits. Paired differences use FS and EFS fits to the same
 dataset. The run manifest records the software versions, seed configuration,
 archive file hashes, and validation status.
+
+## Archived 500-dataset experiment
+
+`results/neurips_500/` contains the summaries and manifest for the run with
+500 datasets per SNR. Use the following command to redraw that figure.
+
+```sh
+python experiments/camera_ready/neurips_figure2.py --replicates 500 --summary experiments/camera_ready/results/neurips_500/correlated_marginal_summary.csv --output /tmp/efs-figure2-500.pdf
+```
 
 ## Archived 200-dataset experiment
 

@@ -5,10 +5,10 @@ Yan Shuo Tan, and Chang Yu.
 
 This repository contains the simulation and plotting code for Figures 1 and 2,
 the saved simulation results, and the calculations used for the uncertainty
-statements in Appendix A. The updated Figure 2 in this repository uses 500
-independent datasets at each SNR in `{0.05, 0.25, 1.0}` (1,500 total).
-The earlier 200-dataset-per-SNR results and the original SNR `0.053` records
-are retained for reproducibility.
+statements in Appendix A. The updated Figure 2 in this repository uses 1,000
+independent datasets at each SNR in `{0.05, 0.25, 1.0}` (3,000 total).
+The repository also retains the runs with 200 and 500 datasets per SNR and
+the original SNR `0.053` records for reproducibility.
 
 ## Installation
 
@@ -52,7 +52,7 @@ The plotting script retains the coordinates recovered from the original
 PDF to preserve the published figure. That PDF, the recovered coordinates,
 and the extraction checks are included. The dashed curves use midpoint
 `h(alpha,k)+1/2`, as in the paper. Figure 2 uses the saved means and pointwise
-95% Monte Carlo intervals for the 1,500 datasets.
+95% Monte Carlo intervals for the 3,000 datasets.
 
 ## Check the saved results
 
@@ -60,33 +60,33 @@ and the extraction checks are included. The dashed curves use midpoint
 python experiments/camera_ready/compute_weights.py --check
 python experiments/camera_ready/correlated.py --validate
 python experiments/camera_ready/validate_results.py
-python experiments/camera_ready/neurips_simulation.py --replicates 500 --summarize-only
+python experiments/camera_ready/neurips_simulation.py --replicates 1000 --summarize-only
 ```
 
 The first command checks Figure 1 without writing files. The next two
 compare the numerical kernel with direct least squares and check the original
 600 records and their summary statistics. The last command rebuilds the
-updated summaries from all 1,500 records and checks the seeds, cross-validation
+updated summaries from all 3,000 records and checks the seeds, cross-validation
 selections, and identities relating paired differences in training error,
 prediction error, and degrees of freedom.
 
 The validation and summary scripts update their reports without rerunning
 simulation fits. The updated paired intervals are in
-`experiments/camera_ready/results/neurips_500/`. The archived 200-dataset
+`experiments/camera_ready/results/neurips_1000/`. The archived 200-dataset
 evidence for Appendix A is in `experiments/camera_ready/results/neurips_snr005/`.
 
 ## Repeat the Figure 2 experiment
 
-The updated run reuses the first 200 verified datasets at each SNR and adds
-300 with the same simulation settings and seed scheme.
+The updated run reuses the first 500 verified datasets at each SNR and adds
+500 with the same simulation settings and seed scheme.
 
 ```sh
-python experiments/camera_ready/neurips_simulation.py --replicates 500 --workers 4
+python experiments/camera_ready/neurips_simulation.py --replicates 1000 --workers 4
 python experiments/camera_ready/neurips_figure2.py
 ```
 
-To refit all 1,500 datasets, pass `--fresh` and a new `--output` directory
-to the simulation script. For the full commands and the archived experiment,
+To refit all 3,000 datasets, pass `--fresh` and a new `--output` directory
+to the simulation script. For the full commands and the archived experiments,
 see the [reproduction notes](experiments/camera_ready/README.md).
 
 ## Files

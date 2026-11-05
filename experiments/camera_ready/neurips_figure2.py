@@ -16,8 +16,8 @@ from matplotlib.ticker import MaxNLocator
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
-SUMMARY = Path(__file__).parent / "results/neurips_500/correlated_marginal_summary.csv"
-REPLICATES = 500
+SUMMARY = Path(__file__).parent / "results/neurips_1000/correlated_marginal_summary.csv"
+REPLICATES = 1000
 METHODS = ("FS", "EFS")
 COLORS = ("#0072B2", "#D55E00")
 MARKERS = ("o", "s")

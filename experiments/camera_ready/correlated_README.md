@@ -1,15 +1,15 @@
 # Revised Figure 2: correlated-design comparison
 
-The updated Figure 2 reports uncertainty estimates from 500 independent
+The updated Figure 2 reports uncertainty estimates from 1,000 independent
 datasets per SNR. The simulation implements the estimator defined in the paper.
 The earlier raw simulation outputs and exact run configuration were not present
 in the manuscript repository or supplementary code archive.
 
 ## Run
 
-For the updated figure, run `neurips_simulation.py --replicates 500 --workers 4`
-with the supplied records, then `neurips_figure2.py`. The simulation adds 300
-datasets per SNR to the first 200 and writes summaries to `results/neurips_500/`.
+For the updated figure, run `neurips_simulation.py --replicates 1000 --workers 4`
+with the supplied records, then `neurips_figure2.py`. The simulation adds 500
+datasets per SNR to the first 500 and writes summaries to `results/neurips_1000/`.
 For the from-scratch commands, see the [reproduction notes](README.md).
 
 The original 200-dataset experiment can be reproduced with the commands below.
@@ -33,7 +33,7 @@ time, and seed policy are recorded in the scripts and result manifest.
 
 ## Experiment
 
-- 500 independent datasets for each population SNR in `{0.05, 0.25, 1}` in
+- 1,000 independent datasets for each population SNR in `{0.05, 0.25, 1}` in
   the updated figure. The original run used 200 datasets per SNR in
   `{0.053, 0.25, 1}`.
 - `n=1000`, `p=100`, Gaussian rows with covariance `Sigma[i,j]=0.5**abs(i-j)`.

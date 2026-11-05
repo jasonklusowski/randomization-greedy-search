@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run or summarize the 500-dataset-per-SNR NeurIPS Figure 2 experiment."""
+"""Run or summarize the NeurIPS Figure 2 experiment."""
 from __future__ import annotations
 
 import correlated as core  # Set numerical-library thread counts before importing NumPy.
@@ -19,9 +19,10 @@ from neurips_snr005 import CONFIG, ORIGINAL_CONFIG, initialize_worker, sha256
 HERE = Path(__file__).resolve().parent
 ARCHIVE = HERE / "results"
 LOW_SNR_ARCHIVE = ARCHIVE / "neurips_snr005"
-OUTPUT = ARCHIVE / "neurips_500"
+PREVIOUS_RUN = ARCHIVE / "neurips_500"
 ARCHIVE_REPLICATES = 200
-REPLICATES = 500
+PREVIOUS_REPLICATES = 500
+REPLICATES = 1000
 
 
 def checkpoint(directory, rep, scenario):
@@ -30,6 +31,8 @@ def checkpoint(directory, rep, scenario):
 
 
 def archived_checkpoint(rep, scenario):
+    if rep >= ARCHIVE_REPLICATES:
+        return checkpoint(PREVIOUS_RUN, rep, scenario), CONFIG
     if scenario == 0:
         return checkpoint(LOW_SNR_ARCHIVE, rep, scenario), CONFIG
     return checkpoint(ARCHIVE, rep, scenario), ORIGINAL_CONFIG
@@ -57,15 +60,18 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--replicates", type=int, default=REPLICATES)
     parser.add_argument("--workers", type=int, default=4, choices=(1, 2, 3, 4))
-    parser.add_argument("--output", type=Path, default=OUTPUT)
+    parser.add_argument("--output", type=Path,
+                        help="Output directory (default: results/neurips_<replicates>).")
     parser.add_argument("--fresh", action="store_true", help="Do not use archived checkpoints.")
     parser.add_argument("--summarize-only", action="store_true")
     args = parser.parse_args()
     if args.replicates < 2:
         parser.error("--replicates must be at least two for Student-t intervals")
-    output = args.output.resolve()
+    output = (args.output or ARCHIVE / f"neurips_{args.replicates}").resolve()
     if output in {ARCHIVE.resolve(), LOW_SNR_ARCHIVE.resolve()}:
         parser.error("--output must be separate from the historical results")
+    if output == PREVIOUS_RUN.resolve() and args.replicates != PREVIOUS_REPLICATES:
+        parser.error("--output must be separate from the 500-dataset results")
     output.mkdir(parents=True, exist_ok=True)
 
     sources = {}
@@ -78,7 +84,7 @@ def main():
             sources[key] = (path, CONFIG)
             if path.is_file():
                 continue
-            if not args.fresh and rep < ARCHIVE_REPLICATES:
+            if not args.fresh and rep < PREVIOUS_REPLICATES:
                 saved, config = archived_checkpoint(rep, scenario)
                 if saved.is_file():
                     sources[key] = (saved, config)
