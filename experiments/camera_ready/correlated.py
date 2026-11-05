@@ -1,11 +1,5 @@
 #!/usr/bin/env python3
-"""Reproduce the correlated-design comparison with paired Monte Carlo uncertainty.
-
-Fresh implementation of the paper's independent-base-learner EFS estimator.
-Both methods fit an unpenalized intercept. CV jointly selects (k,m), then the
-whole k path is refitted at that one selected m, as in the archived EFSCV.
-The archived optional resampling of feature-set frequencies is not used.
-"""
+"""Generate and fit one dataset in the paper's correlated design experiment."""
 from __future__ import annotations
 
 import os
@@ -13,25 +7,19 @@ for _name in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS",
               "VECLIB_MAXIMUM_THREADS", "NUMEXPR_NUM_THREADS"):
     os.environ[_name] = "1"
 
-import argparse
-from concurrent.futures import ProcessPoolExecutor, as_completed
-import csv
 import ctypes
-from datetime import datetime, timezone
 import hashlib
 import json
 from pathlib import Path
-import platform
 import subprocess
-import sys
 import tempfile
 import time
 
 import numpy as np
 
 HERE = Path(__file__).resolve().parent
-RESULTS = HERE / "results"
-CONFIG = dict(n=1000, p=100, rho=0.5, sparsity=10, snrs=[0.053, 0.25, 1.0],
+RESULTS = HERE / "results/neurips_1000"
+CONFIG = dict(n=1000, p=100, rho=0.5, sparsity=10, snrs=[0.05, 0.25, 1.0],
               ensemble_size=500, folds=10, kmax=20, base_seed=20261027,
               m_grid=[int(2 + 98 * (1.5**i - 1)/(1.5**9 - 1)) for i in range(10)],
               intercept=True, resample_feature_frequencies=False,
@@ -172,7 +160,7 @@ def run_replicate(rep, scenario, directory):
             losses = (validation_y2 - 2 * coefficients @ validation_g
                       + np.einsum("ki,ij,kj->k", coefficients, validation_G, coefficients))
             cv_losses[mi] += losses / CONFIG["folds"]
-    # Archive convention: smallest m wins ties within k, then smallest k.
+    # Choose the smallest m in each k column, then the smallest k, on ties.
     best_m_by_k = np.argmin(cv_losses, axis=0)
     selected_k = int(np.argmin(cv_losses[best_m_by_k, np.arange(kmax)])) + 1
     selected_m_index = int(best_m_by_k[selected_k - 1])
@@ -206,53 +194,3 @@ def run_replicate(rep, scenario, directory):
     os.replace(temporary, path)
     return {"replicate": rep, "snr": snr, "selected_k": selected_k,
             "selected_m": selected_m, "seconds": round(elapsed, 3)}
-
-
-def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--validate", action="store_true")
-    parser.add_argument("--benchmark", action="store_true")
-    parser.add_argument("--replicates", type=int, default=100)
-    parser.add_argument("--workers", type=int, default=3)
-    parser.add_argument("--scenario", type=int, choices=range(3), default=None)
-    parser.add_argument("--output", type=Path, default=RESULTS)
-    args = parser.parse_args()
-    load_kernel()
-    if args.validate:
-        print(json.dumps(validate_kernel()), flush=True)
-        return
-    directory = args.output / ("benchmark" if args.benchmark else "replicates")
-    scenarios = [args.scenario] if args.scenario is not None else list(range(3))
-    if args.benchmark:
-        print(json.dumps(validate_kernel()), flush=True)
-        print(json.dumps(run_replicate(0, scenarios[0], directory)), flush=True)
-        return
-    if not 1 <= args.workers <= 4:
-        raise ValueError("Use between one and four workers")
-    args.output.mkdir(parents=True, exist_ok=True)
-    validation = validate_kernel()
-    (args.output / "correlated_validation.json").write_text(json.dumps(validation, indent=2))
-    manifest = dict(config=CONFIG, replicates_per_snr=args.replicates,
-                    workers=args.workers, scenarios=scenarios, status="running",
-                    started_utc=datetime.now(timezone.utc).isoformat(),
-                    python=sys.version, numpy=np.__version__, platform=platform.platform(),
-                    source_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-                    kernel_sha256=hashlib.sha256((HERE / "gram_fs.cpp").read_bytes()).hexdigest(),
-                    blas_threads=1, metrics=list(METRICS),
-                    plotted_df="df_covariance", interval="pointwise paired/marginal t 95%")
-    manifest_path = args.output / "correlated_manifest.json"
-    manifest_path.write_text(json.dumps(manifest, indent=2))
-    jobs = [(rep, scenario, directory) for rep in range(args.replicates) for scenario in scenarios]
-    started = time.monotonic()
-    with ProcessPoolExecutor(max_workers=args.workers) as pool:
-        futures = [pool.submit(run_replicate, *job) for job in jobs]
-        for future in as_completed(futures):
-            print(json.dumps(future.result()), flush=True)
-    manifest.update(status="complete", completed_utc=datetime.now(timezone.utc).isoformat(),
-                    elapsed_seconds=time.monotonic() - started, datasets=len(jobs))
-    manifest_path.write_text(json.dumps(manifest, indent=2))
-    print(json.dumps({"complete": len(jobs), "seconds": manifest["elapsed_seconds"]}), flush=True)
-
-
-if __name__ == "__main__":
-    main()

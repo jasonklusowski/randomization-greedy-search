@@ -3,116 +3,62 @@
 Code and synthetic results for the paper by Xin Chen, Jason M. Klusowski,
 Yan Shuo Tan, and Chang Yu.
 
-This repository contains the simulation and plotting code for Figures 1 and 2,
-the saved simulation results, and the calculations used for the uncertainty
-statements in Appendix A. The updated Figure 2 in this repository uses 1,000
-independent datasets at each SNR in `{0.05, 0.25, 1.0}` (3,000 total).
-The repository also retains the runs with 200 and 500 datasets per SNR and
-the original SNR `0.053` records for reproducibility.
+## Install
 
-## Installation
-
-Use Python 3.12 and a C++17 compiler available as `clang++`. The simulation
-script compiles its C++ kernel automatically. No compiled binary is supplied.
-Run the following commands from a terminal.
+Use Python 3.12 and a C++17 compiler available as `clang++`. From the repository
+root, create an environment and install the pinned dependencies.
 
 ```sh
-git clone https://github.com/jasonklusowski/randomization-greedy-search.git
-cd randomization-greedy-search
 python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r experiments/camera_ready/requirements.txt
 ```
 
-All subsequent commands run from the repository root. The requirements file
-pins the Python package versions used for reproduction. The simulations use
-the CPU and do not require a GPU or external data. Numerical results can
-differ slightly across compilers and numerical libraries.
-
 ## Redraw the figures
 
 ```sh
-python experiments/camera_ready/compute_weights.py
 python experiments/camera_ready/neurips_figure1.py
 python experiments/camera_ready/neurips_figure2.py
 ```
 
-The figure outputs are `neurips/figures/figure1.pdf` and
-`neurips/figures/figure2.pdf`. These commands do not repeat the simulation fits.
+These commands write `neurips/figures/figure1.pdf` and
+`neurips/figures/figure2.pdf`. Figure 1 uses the theoretical curves computed in
+`compute_weights.py`. Figure 2 uses the saved marginal summaries.
 
-`compute_weights.py` evaluates Theorem 3.1 and its logistic approximation to
-regenerate all 120 Figure 1 coordinates. It checks the exact weights against
-an independent positive recurrence and the logistic bounds. The computed
-coordinates agree with those recovered from the original vector PDF within
-`1.8e-9`, reflecting rounding in the PDF. It writes
-`figure1_theory_curves.csv` and `figure1_theory_validation.json` under
-`experiments/camera_ready/results/`.
-
-The plotting script retains the coordinates recovered from the original
-PDF to preserve the published figure. That PDF, the recovered coordinates,
-and the extraction checks are included. The dashed curves use midpoint
-`h(alpha,k)+1/2`, as in the paper. Figure 2 uses the saved means and pointwise
-95% Monte Carlo intervals for the 3,000 datasets.
-
-## Check the saved results
+## Verify the simulation results
 
 ```sh
-python experiments/camera_ready/compute_weights.py --check
-python experiments/camera_ready/correlated.py --validate
-python experiments/camera_ready/validate_results.py
-python experiments/camera_ready/neurips_simulation.py --replicates 1000 --summarize-only
+python experiments/camera_ready/neurips_simulation.py --summarize-only
 ```
 
-The first command checks Figure 1 without writing files. The next two
-compare the numerical kernel with direct least squares and check the original
-600 records and their summary statistics. The last command rebuilds the
-updated summaries from all 3,000 records and checks the seeds, cross-validation
-selections, and identities relating paired differences in training error,
-prediction error, and degrees of freedom.
+This validates the 3,000 replicate files in
+`experiments/camera_ready/results/neurips_1000/replicates/` and rebuilds
+`correlated_marginal_summary.csv` and `correlated_paired_summary.csv` in
+`experiments/camera_ready/results/neurips_1000/` using
+`correlated_summary.py`.
 
-The validation and summary scripts update their reports without rerunning
-simulation fits. The updated paired intervals are in
-`experiments/camera_ready/results/neurips_1000/`. The archived 200-dataset
-evidence for Appendix A is in `experiments/camera_ready/results/neurips_snr005/`.
+The simulation uses 1,000 independent datasets at each SNR in
+`{0.05, 0.25, 1.0}`, with `n=1000`, `p=100`, Gaussian AR(1) features
+with correlation parameter 0.5, and 10 unit coefficients. EFS averages 500
+randomized FS paths per fit. Ten-fold cross-validation selects `(k,m)`, then
+EFS refits the full path through `k=20` at the selected `m`. Both methods
+fit an intercept and use the same data within each replicate.
 
-## Repeat the Figure 2 experiment
+The figure shows pointwise 95% Monte Carlo Student-t intervals for mean
+training MSE and covariance degrees of freedom. The paired summaries apply
+the same interval calculation to the EFS minus FS differences within each
+dataset and include prediction error.
 
-The updated run reuses the first 500 verified datasets at each SNR and adds
-500 with the same simulation settings and seed scheme.
+## Rerun the simulation
+
+Run the following commands from the repository root with a new output directory.
+The fit code in `correlated.py` compiles `gram_fs.cpp` automatically and uses
+CPU workers.
 
 ```sh
-python experiments/camera_ready/neurips_simulation.py --replicates 1000 --workers 4
-python experiments/camera_ready/neurips_figure2.py
+python experiments/camera_ready/neurips_simulation.py --workers 4 --output /tmp/efs-paper-results
+python experiments/camera_ready/neurips_figure2.py --summary /tmp/efs-paper-results/correlated_marginal_summary.csv --output /tmp/efs-paper-results/figure2.pdf
 ```
-
-To refit all 3,000 datasets, pass `--fresh` and a new `--output` directory
-to the simulation script. For the full commands and the archived experiments,
-see the [reproduction notes](experiments/camera_ready/README.md).
-
-## Files
-
-- `experiments/camera_ready/correlated.py` generates data, tunes the estimators,
-  and records the original simulation fits.
-- `experiments/camera_ready/gram_fs.cpp` implements the FS and EFS fitting kernel.
-- `experiments/camera_ready/neurips_simulation.py` runs and validates the
-  updated Figure 2 experiment.
-- `experiments/camera_ready/neurips_snr005.py` reproduces the archived SNR
-  `0.05` experiment and combines its results with the earlier higher SNR records.
-- `experiments/camera_ready/correlated_plot.py` calculates summaries and
-  intervals from the saved simulation results.
-- `experiments/camera_ready/compute_weights.py` evaluates the Figure 1 curves
-  from the theory and checks the published coordinates.
-- `experiments/camera_ready/neurips_figure1.py` and `neurips_figure2.py` draw
-  the figures included in this repository.
-- `experiments/camera_ready/validate_results.py` checks the numerical kernel,
-  saved records, and summaries independently.
-- `experiments/camera_ready/results/` contains raw records, summaries, seeds,
-  software information, source hashes, and validation reports.
-
-The [experiment description](experiments/camera_ready/correlated_README.md)
-gives the estimator, tuning grid, metrics, and uncertainty calculations.
-The [reproduction notes](experiments/camera_ready/README.md) describe the
-saved outputs and how the current results relate to the earlier experiment.
 
 ## License
 
