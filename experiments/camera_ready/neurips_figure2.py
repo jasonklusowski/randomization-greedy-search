@@ -16,14 +16,15 @@ from matplotlib.ticker import MaxNLocator
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
-SUMMARY = Path(__file__).parent / "results/neurips_snr005/correlated_marginal_summary.csv"
+SUMMARY = Path(__file__).parent / "results/neurips_500/correlated_marginal_summary.csv"
+REPLICATES = 500
 METHODS = ("FS", "EFS")
 COLORS = ("#0072B2", "#D55E00")
 MARKERS = ("o", "s")
 SNRS = (0.05, 0.25, 1.0)
 
 
-def load_estimates(path):
+def load_estimates(path, replicates=REPLICATES):
     with path.open() as handle:
         records = list(csv.DictReader(handle))
     estimates = {}
@@ -34,7 +35,8 @@ def load_estimates(path):
                                and row["method"] == method and row["metric"] == metric),
                               key=lambda row: int(row["k"]))
                 assert [int(row["k"]) for row in rows] == list(range(1, 21))
-                assert all(int(row["replicates"]) == 200 for row in rows)
+                if any(int(row["replicates"]) != replicates for row in rows):
+                    raise ValueError(f"Expected {replicates} datasets per SNR in {path}")
                 values = np.array([[float(row[key]) for key in ("mean", "ci_low", "ci_high")]
                                    for row in rows])
                 assert np.all(values[:, 1] <= values[:, 0])
@@ -123,10 +125,11 @@ def plot(estimates, output, preview=None):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--summary", type=Path, default=SUMMARY)
+    parser.add_argument("--replicates", type=int, default=REPLICATES)
     parser.add_argument("--output", type=Path, default=ROOT / "neurips/figures/figure2.pdf")
     parser.add_argument("--preview", type=Path)
     args = parser.parse_args()
-    plot(load_estimates(args.summary), args.output, args.preview)
+    plot(load_estimates(args.summary, args.replicates), args.output, args.preview)
 
 
 if __name__ == "__main__":

@@ -1,20 +1,19 @@
 # Revised Figure 2: correlated-design comparison
 
-This study reproduces the revised Figure 2 with uncertainty estimates from
-200 independent datasets per SNR. It implements the estimator defined in the paper.
+The updated Figure 2 reports uncertainty estimates from 500 independent
+datasets per SNR. The simulation implements the estimator defined in the paper.
 The earlier raw simulation outputs and exact run configuration were not present
 in the manuscript repository or supplementary code archive.
 
 ## Run
 
-For the current NeurIPS figure, run `neurips_snr005.py --workers 3` after the
-original experiment below, then `neurips_figure2.py`. The wrapper reruns 200
-datasets at SNR 0.05 with the original scenario-0 seeds, reuses the 400 records
-at SNR 0.25 and 1.0, and writes current summaries under `results/neurips_snr005/`.
-The original SNR 0.053 records remain unchanged for provenance and other
-manuscript versions.
+For the updated figure, run `neurips_simulation.py --replicates 500 --workers 4`
+with the supplied records, then `neurips_figure2.py`. The simulation adds 300
+datasets per SNR to the first 200 and writes summaries to `results/neurips_500/`.
+For the from-scratch commands, see the [reproduction notes](README.md).
 
-Requirements: Python with NumPy, SciPy, and Matplotlib, plus a C++17 compiler
+The original 200-dataset experiment can be reproduced with the commands below.
+It requires Python with NumPy, SciPy, and Matplotlib, plus a C++17 compiler
 available as `clang++`. The Python script compiles `gram_fs.cpp` into a temporary
 shared library automatically. No compiled binary is required in the repository.
 
@@ -34,8 +33,9 @@ time, and seed policy are recorded in the scripts and result manifest.
 
 ## Experiment
 
-- 200 independent datasets for each population SNR in `{0.05, 0.25, 1}` in
-  the current NeurIPS figure. The original run used `{0.053, 0.25, 1}`.
+- 500 independent datasets for each population SNR in `{0.05, 0.25, 1}` in
+  the updated figure. The original run used 200 datasets per SNR in
+  `{0.053, 0.25, 1}`.
 - `n=1000`, `p=100`, Gaussian rows with covariance `Sigma[i,j]=0.5**abs(i-j)`.
 - The first ten population coefficients equal one and all others equal zero.
 - Noise variance is `beta.T @ Sigma @ beta / SNR`.
@@ -101,9 +101,9 @@ for EFS. These are not simultaneous confidence bands.
 - `correlated_paired_summary.csv`: the corresponding paired-difference summaries.
 - `correlated_diagnostics.json`: selected-parameter frequencies and consistency
   checks for the two df estimators.
-- `correlated_mse_vs_df_*.pdf`: the three Figure 2 panels with marginal
-  uncertainty in both coordinates. The plotting script produces only these
-  panels, with PNG previews.
+- `correlated_mse_vs_df_*.pdf`: the three original 200-dataset panels with
+  marginal uncertainty in both coordinates. The updated combined figure is
+  `neurips/figures/figure2.pdf`.
 - `independent_validation.json`: direct-least-squares kernel comparisons,
   raw-summary recomputation, CV-selection checks, and paired metric identities.
 

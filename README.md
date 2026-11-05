@@ -5,9 +5,10 @@ Yan Shuo Tan, and Chang Yu.
 
 This repository contains the simulation and plotting code for Figures 1 and 2,
 the saved simulation results, and the calculations used for the uncertainty
-statements in Appendix A. Figure 2 uses 200 independent datasets at each SNR
-in `{0.05, 0.25, 1.0}`. The 200 older records at SNR `0.053` are retained for
-provenance and are excluded from the current figure.
+statements in Appendix A. The updated Figure 2 in this repository uses 500
+independent datasets at each SNR in `{0.05, 0.25, 1.0}` (1,500 total).
+The earlier 200-dataset-per-SNR results and the original SNR `0.053` records
+are retained for reproducibility.
 
 ## Installation
 
@@ -28,7 +29,7 @@ pins the Python package versions used for reproduction. The simulations use
 the CPU and do not require a GPU or external data. Numerical results can
 differ slightly across compilers and numerical libraries.
 
-## Redraw the paper figures
+## Redraw the figures
 
 ```sh
 python experiments/camera_ready/compute_weights.py
@@ -50,8 +51,8 @@ coordinates agree with those recovered from the original vector PDF within
 The plotting script retains the coordinates recovered from the original
 PDF to preserve the published figure. That PDF, the recovered coordinates,
 and the extraction checks are included. The dashed curves use midpoint
-`h(alpha,k)+1/2`, as in the current paper. Figure 2 uses the saved means and
-pointwise 95% Monte Carlo intervals for the 600 current datasets.
+`h(alpha,k)+1/2`, as in the paper. Figure 2 uses the saved means and pointwise
+95% Monte Carlo intervals for the 1,500 datasets.
 
 ## Check the saved results
 
@@ -59,64 +60,50 @@ pointwise 95% Monte Carlo intervals for the 600 current datasets.
 python experiments/camera_ready/compute_weights.py --check
 python experiments/camera_ready/correlated.py --validate
 python experiments/camera_ready/validate_results.py
-python experiments/camera_ready/neurips_snr005.py --summarize-only
+python experiments/camera_ready/neurips_simulation.py --replicates 500 --summarize-only
 ```
 
 The first command checks Figure 1 without writing files. The next two
 compare the numerical kernel with direct least squares and check the original
 600 records and their summary statistics. The last command rebuilds the
-current summaries from the 200 records at SNR
-`0.05` and the 400 records at SNR `0.25` and `1.0`. It also checks the selected
-cross validation parameters and the identities relating paired differences
-in training error, prediction error, and degrees of freedom.
+updated summaries from all 1,500 records and checks the seeds, cross-validation
+selections, and identities relating paired differences in training error,
+prediction error, and degrees of freedom.
 
-These commands update validation reports and summary files. They do not
-rerun the simulation fits. Paired intervals and the evidence for the claims
-in Appendix A are in `experiments/camera_ready/results/neurips_snr005/`.
+The validation and summary scripts update their reports without rerunning
+simulation fits. The updated paired intervals are in
+`experiments/camera_ready/results/neurips_500/`. The archived 200-dataset
+evidence for Appendix A is in `experiments/camera_ready/results/neurips_snr005/`.
 
-## Repeat all simulation fits
+## Repeat the Figure 2 experiment
 
-Use a separate clone so the supplied results are preserved. In that clone,
-move the supplied results aside before running the experiment.
+The updated run reuses the first 200 verified datasets at each SNR and adds
+300 with the same simulation settings and seed scheme.
 
 ```sh
-mv experiments/camera_ready/results saved_results
-python experiments/camera_ready/correlated.py --validate
-python experiments/camera_ready/correlated.py --replicates 200 --workers 3
-python experiments/camera_ready/correlated_plot.py --replicates 200
-python experiments/camera_ready/validate_results.py
-python experiments/camera_ready/neurips_snr005.py --workers 3
+python experiments/camera_ready/neurips_simulation.py --replicates 500 --workers 4
 python experiments/camera_ready/neurips_figure2.py
-python experiments/camera_ready/neurips_figure1.py --extract-source images/wj_vs_gamma_logistic.pdf
-python experiments/camera_ready/compute_weights.py
 ```
 
-This reproduces the original 600 fits at SNRs `{0.053, 0.25, 1.0}`, then the
-200 fits at SNR `0.05` used in the current paper. The latter step reuses the
-400 fits at the two higher SNRs. The final two commands repeat the extraction
-and plotting of Figure 1 from the included source PDF, then independently
-regenerate its mathematical curves and compare the coordinates.
-
-Keep the default output paths for this sequence. The validator and the SNR
-`0.05` script read the original records from
-`experiments/camera_ready/results/`. Runs resume from completed replicate
-files after checking their configurations. The scripts permit one to four
-workers. Seeds and simulation settings are fixed in the scripts and recorded
-with the results.
+To refit all 1,500 datasets, pass `--fresh` and a new `--output` directory
+to the simulation script. For the full commands and the archived experiment,
+see the [reproduction notes](experiments/camera_ready/README.md).
 
 ## Files
 
 - `experiments/camera_ready/correlated.py` generates data, tunes the estimators,
   and records the original simulation fits.
 - `experiments/camera_ready/gram_fs.cpp` implements the FS and EFS fitting kernel.
-- `experiments/camera_ready/neurips_snr005.py` runs the current SNR `0.05`
-  experiment and combines its results with the higher SNR records.
+- `experiments/camera_ready/neurips_simulation.py` runs and validates the
+  updated Figure 2 experiment.
+- `experiments/camera_ready/neurips_snr005.py` reproduces the archived SNR
+  `0.05` experiment and combines its results with the earlier higher SNR records.
 - `experiments/camera_ready/correlated_plot.py` calculates summaries and
-  intervals for the original experiment.
+  intervals from the saved simulation results.
 - `experiments/camera_ready/compute_weights.py` evaluates the Figure 1 curves
   from the theory and checks the published coordinates.
 - `experiments/camera_ready/neurips_figure1.py` and `neurips_figure2.py` draw
-  the figures used in the paper.
+  the figures included in this repository.
 - `experiments/camera_ready/validate_results.py` checks the numerical kernel,
   saved records, and summaries independently.
 - `experiments/camera_ready/results/` contains raw records, summaries, seeds,

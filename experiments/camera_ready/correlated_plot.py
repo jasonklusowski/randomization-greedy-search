@@ -38,47 +38,69 @@ def write_csv(path, records):
         writer.writerows(records)
 
 
-def summarize(output, expected):
+def summarize(output, expected, *, source_for=None, config=None):
+    """Summarize checkpoints, optionally using a supplied path and config per replicate."""
+    if config is None:
+        config = CONFIG
+    kmax = config["kmax"]
     raw = []
     summary = []
     paired = []
     data = {}
     diagnostics = {}
     all_seeds = set()
-    for scenario, snr in enumerate(CONFIG["snrs"]):
+    for scenario, snr in enumerate(config["snrs"]):
         arrays, selected_ms, selected_ks, elapsed = [], [], [], []
         for rep in range(expected):
-            path = output / "replicates" / f"correlated_snr{snr:g}_rep{rep:04d}.npz"
+            if source_for is None:
+                path = output / "replicates" / f"correlated_snr{snr:g}_rep{rep:04d}.npz"
+                source_config = config
+            else:
+                path, source_config = source_for(rep, scenario)
+                # Historical SNR grids may differ at other scenario indices.
+                if (source_config["snrs"][scenario] != snr
+                        or {**source_config, "snrs": config["snrs"]} != config):
+                    raise AssertionError(f"Incompatible source configuration: {path}")
             with np.load(path) as saved:
-                if json.loads(str(saved["config_json"])) != CONFIG:
+                if json.loads(str(saved["config_json"])) != source_config:
                     raise AssertionError(f"Configuration mismatch: {path}")
+                identity = (int(saved["replicate"]), int(saved["scenario"]), float(saved["snr"]))
+                if identity != (rep, scenario, snr):
+                    raise AssertionError(f"Replicate identity mismatch: {path}")
                 values = saved["metrics"]
                 coefficients = saved["coefficients"]
-                assert values.shape == (2, CONFIG["kmax"], len(METRICS))
+                assert values.shape == (2, kmax, len(METRICS))
                 assert np.all(np.isfinite(values))
                 assert np.all(values[:, :, :2] >= 0)
-                np.testing.assert_allclose(values[1, :, 2] - values[0, :, 2],
-                                           values[1, :, 3] - values[0, :, 3], atol=1e-10)
+                sigma2 = float(saved["sigma2"])
+                delta = values[1] - values[0]
+                np.testing.assert_allclose(delta[:, 2], delta[:, 3], rtol=0, atol=1e-10)
+                np.testing.assert_allclose(delta[:, 1] - delta[:, 0],
+                                           (2 * sigma2 / config["n"]) * delta[:, 3],
+                                           rtol=0, atol=1e-9)
                 np.testing.assert_array_equal(np.count_nonzero(coefficients[0], axis=1),
-                                              np.arange(CONFIG["kmax"] + 1))
+                                              np.arange(kmax + 1))
                 selected_m, selected_k = int(saved["selected_m"]), int(saved["selected_k"])
                 cv = saved["cv_losses"]
                 best_m_by_k = np.argmin(cv, axis=0)
-                check_k = int(np.argmin(cv[best_m_by_k, np.arange(CONFIG["kmax"])])) + 1
+                check_k = int(np.argmin(cv[best_m_by_k, np.arange(kmax)])) + 1
                 assert check_k == selected_k
-                assert CONFIG["m_grid"][best_m_by_k[check_k - 1]] == selected_m
+                assert config["m_grid"][best_m_by_k[check_k - 1]] == selected_m
                 data_seed = int(saved["data_seed"])
-                sigma2 = float(saved["sigma2"])
+                seed_sequence = np.random.SeedSequence([config["base_seed"], rep, scenario, 0])
+                expected_seed = int(seed_sequence.generate_state(1, dtype=np.uint64)[0])
+                if data_seed != expected_seed:
+                    raise AssertionError(f"Data seed mismatch: {path}")
                 assert data_seed not in all_seeds
                 all_seeds.add(data_seed)
-                if selected_m == CONFIG["p"]:
+                if selected_m == config["p"]:
                     np.testing.assert_array_equal(values[0], values[1])
                 arrays.append(values)
                 selected_ms.append(selected_m)
                 selected_ks.append(selected_k)
                 elapsed.append(float(saved["elapsed_seconds"]))
                 for method, method_name in enumerate(METHODS):
-                    for ki in range(CONFIG["kmax"]):
+                    for ki in range(kmax):
                         record = dict(replicate=rep, snr=snr, method=method_name, k=ki + 1,
                                       selected_m=selected_m, selected_k=selected_k,
                                       sigma2=sigma2, data_seed=data_seed)
@@ -90,14 +112,14 @@ def summarize(output, expected):
         marginal = interval(values)
         differences = interval(values[:, 1] - values[:, 0])
         for method, method_name in enumerate(METHODS):
-            for ki in range(CONFIG["kmax"]):
+            for ki in range(kmax):
                 for mi, metric in enumerate(METRICS):
                     record = dict(snr=snr, method=method_name, k=ki + 1,
                                   metric=metric, replicates=expected)
                     record.update({key: float(array[method, ki, mi]) for key, array in
                                    zip(("mean", "sd", "mcse", "ci_low", "ci_high"), marginal)})
                     summary.append(record)
-        for ki in range(CONFIG["kmax"]):
+        for ki in range(kmax):
             for mi, metric in enumerate(METRICS):
                 record = dict(snr=snr, k=ki + 1, metric=metric, replicates=expected,
                               contrast="EFS minus FS")
