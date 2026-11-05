@@ -91,11 +91,12 @@ def plot(estimates, output, preview=None):
             {1: (0.82, 0.48), 10: (0.38, 0.08), 20: (0.34, 0.96)},
         )[index]
         for k, position in label_positions.items():
+            point_clearance = 5.5 if index == 0 and k == 20 else 3
             ax.annotate(rf"$k={k}$", xy=(x[k-1], y[k-1]), xytext=position,
                         textcoords="axes fraction", ha="center", va="center",
                         fontsize=7.2, color="#333333",
                         arrowprops={"arrowstyle": "-", "color": "#777777", "lw": 0.5,
-                                    "shrinkA": 2, "shrinkB": 3},
+                                    "shrinkA": 2, "shrinkB": point_clearance},
                         zorder=5)
         ax.set_xlabel("Training MSE", labelpad=2)
         ax.spines[["top", "right"]].set_visible(False)
